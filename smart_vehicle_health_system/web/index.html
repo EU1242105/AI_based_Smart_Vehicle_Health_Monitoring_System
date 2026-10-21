@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Smart Vehicle Health Monitoring System | Capstone Project</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --card-bg: #0f172a;
+      --card-border: #1e293b;
+      --accent: #00f2fe;
+      --accent-glow: rgba(0, 242, 254, 0.25);
+      --success: #00e676;
+      --warning: #ffb300;
+      --danger: #ff1744;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 18px; line-height: 1.5; }
+    header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--card-border); margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+    .title-group h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .title-group p { font-size: 12.5px; color: var(--accent); font-weight: 500; }
+    
+    /* Navigation Tabs */
+    .tab-bar { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; overflow-x: auto; }
+    .tab-btn { background: #0f172a; color: var(--text-muted); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn:hover { background: #1e293b; color: #fff; }
+    .tab-btn.active { background: #1e293b; color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; margin-bottom: 20px; }
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-7 { grid-column: span 7; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+    @media (max-width: 992px) { .col-3, .col-4, .col-5, .col-6, .col-7, .col-8 { grid-column: span 12; } }
+
+    .wizard-container { max-width: 860px; margin: 0 auto; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .card-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
+    .card-title span.tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+    
+    .badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-tcs { background: rgba(147, 51, 234, 0.2); color: #c084fc; border: 1px solid rgba(147, 51, 234, 0.4); }
+    .badge-sc { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .badge-aiml { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    .btn { background: #1e293b; color: #fff; border: 1px solid #334155; padding: 9px 16px; border-radius: 6px; cursor: pointer; font-size: 12.5px; font-weight: 600; transition: all 0.2s; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:hover { background: #334155; border-color: var(--accent); }
+    .btn-active { background: var(--accent); color: #000; font-weight: 700; border-color: var(--accent); }
+    .btn-primary { background: #2563eb; border-color: #3b82f6; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-success { background: #059669; border-color: #10b981; color: #fff; }
+    .btn-success:hover { background: #047857; }
+    .btn-danger { background: rgba(255, 23, 68, 0.2); border-color: var(--danger); color: var(--danger); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+
+    /* Form Styles */
+    .form-group { margin-bottom: 13px; }
+    .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+    input[type=number], input[type=text], input[type=date], select, textarea { background: #070b14; border: 1px solid #334155; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12.5px; width: 100%; }
+    textarea { resize: vertical; min-height: 65px; line-height: 1.4; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+
+    .checklist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+    @media (max-width: 600px) { .checklist-grid { grid-template-columns: repeat(2, 1fr); } }
+    .check-label { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted); cursor: pointer; background: #070b14; padding: 6px 10px; border-radius: 6px; border: 1px solid #1e293b; }
+    .check-label:hover { border-color: #334155; color: #fff; }
+    .check-label input { accent-color: var(--accent); }
+
+    /* Wizard Step Bar */
+    .wizard-steps { display: flex; justify-content: space-between; margin-bottom: 18px; background: #0f172a; padding: 12px 18px; border-radius: 8px; border: 1px solid var(--card-border); max-width: 860px; margin-left: auto; margin-right: auto; }
+    .wiz-step { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+    .wiz-step.active { color: var(--accent); font-weight: 700; }
+    .wiz-step.completed { color: var(--success); }
+    .wiz-num { width: 24px; height: 24px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 11.5px; }
+    .wiz-step.active .wiz-num { background: var(--accent); color: #000; font-weight: 800; box-shadow: 0 0 8px var(--accent-glow); }
+    .wiz-step.completed .wiz-num { background: var(--success); color: #000; }
+
+    /* Selected Vehicle Banner */
+    .vehicle-summary-strip { background: #070b14; border: 1px solid #1e3a8a; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .vehicle-summary-text { font-size: 13px; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+
+    /* Question Cards */
+    .q-card { background: #070b14; border: 1px solid #1e293b; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+    .q-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+    .q-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .q-opt-btn { background: #1e293b; border: 1px solid #334155; color: #cbd5e1; padding: 7px 15px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+    .q-opt-btn:hover { border-color: var(--accent); color: #fff; }
+    .q-opt-btn.selected { background: #0c1e3a; border-color: var(--accent); color: var(--accent); font-weight: 700; box-shadow: 0 0 8px var(--accent-glow); }
+
+    /* Final Decision Banner */
+    .decision-banner { border-radius: 8px; padding: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; border: 1px solid; }
+    .decision-badge-text { font-size: 24px; font-weight: 800; letter-spacing: 0.5px; }
+    .decision-meaning { font-size: 13px; margin-top: 2px; line-height: 1.4; }
+
+    .diy-step-box { background: #070b14; border: 1px solid #1e293b; border-radius: 6px; padding: 9px 12px; font-size: 12px; line-height: 1.45; color: #e2e8f0; margin-bottom: 6px; }
+
+    /* CHATBOT STYLES */
+    .chat-container { display: flex; flex-direction: column; height: 440px; background: #070b14; border: 1px solid #1e293b; border-radius: 8px; overflow: hidden; max-width: 860px; margin: 0 auto; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-msg { max-width: 88%; padding: 10px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.45; word-wrap: break-word; }
+    .chat-msg-user { align-self: flex-end; background: #1e293b; color: #fff; border: 1px solid #334155; }
+    .chat-msg-bot { align-self: flex-start; background: #0c1427; color: #e2e8f0; border: 1px solid #1e3a8a; }
+    .chat-msg-bot strong { color: var(--accent); }
+    .chat-chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: #0b1120; border-top: 1px solid #1e293b; }
+    .chip-btn { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; padding: 4px 10px; border-radius: 14px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+    .chip-btn:hover { background: #334155; border-color: var(--accent); color: #fff; }
+    .chat-input-bar { display: flex; gap: 8px; padding: 10px 12px; background: #0f172a; border-top: 1px solid #1e293b; }
+    .chat-input { flex: 1; background: #070b14; border: 1px solid #334155; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; }
+
+    /* Telemetry Meters (Tab 3) */
+    .telemetry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .meter-box { background: #070b14; border: 1px solid #1e293b; border-radius: 8px; padding: 10px; text-align: center; }
+    .meter-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; }
+    .meter-value { font-size: 22px; font-weight: 700; color: #fff; }
+    .meter-bar { height: 5px; width: 100%; background: #1e293b; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+    .meter-fill { height: 100%; width: 50%; background: var(--accent); }
+
+    .fsm-track { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; position: relative; }
+    .fsm-track::before { content: ''; position: absolute; top: 16px; left: 20px; right: 20px; height: 2px; background: #1e293b; z-index: 0; }
+    .fsm-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .fsm-circle { width: 34px; height: 34px; border-radius: 50%; background: #0b0f19; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-muted); }
+    .fsm-node.active .fsm-circle { border-color: var(--accent); color: #000; background: var(--accent); }
+    .fsm-node-label { font-size: 10px; color: var(--text-muted); font-weight: 600; text-align: center; }
+
+    .adaptive-tag { background: rgba(0, 242, 254, 0.15); color: var(--accent); border: 1px solid rgba(0, 242, 254, 0.3); font-size: 11px; padding: 4px 10px; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-group">
+      <h1>AI-Based Smart Vehicle Health Monitoring & Diagnostic System</h1>
+      <p>5th Sem Computer Engineering Capstone | TCS, Soft Computing & AIML Multi-Tier Architecture</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <span class="badge badge-tcs">TCS: State Automata</span>
+      <span class="badge badge-sc">SC: Fuzzy Decision FIS</span>
+      <span class="badge badge-aiml">AIML: Expert Diagnosis</span>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tabWizard')">📋 Step-by-Step Diagnostic Wizard (DIY vs Mechanic)</button>
+    <button class="tab-btn" onclick="switchTab('tabChatbot')">💬 AI Acoustic Sound & Symptom Chatbot</button>
+    <button class="tab-btn" onclick="switchTab('tabTelemetry')">⚙️ Real-Time Telemetry & ECU Sensor Cockpit</button>
+    <button class="tab-btn" onclick="switchTab('tabFaculty')">🎓 Faculty Viva & Subject Alignment Guide</button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: STEP-BY-STEP DIAGNOSTIC WIZARD (CLEAN SEPARATED 4-STAGE FLOW)       -->
+  <!-- ========================================================================= -->
+  <div id="tabWizard" class="tab-content">
+    
+    <!-- Wizard Progress Tracker (Clean 4 distinct steps) -->
+    <div class="wizard-steps">
+      <div class="wiz-step active" id="ws1"><div class="wiz-num">1</div> 1. Vehicle Profile</div>
+      <div style="color:var(--card-border);">➔</div>
+      <div class="wiz-step" id="ws2"><div class="wiz-num">2</div> 2. Symptoms & Problem</div>
+      <div style="color:var(--card-border);">➔</div>
+      <div class="wiz-step" id="ws3"><div class="wiz-num">3</div> 3. Diagnostic Checks</div>
+      <div style="color:var(--card-border);">➔</div>
+      <div class="wiz-step" id="ws4"><div class="wiz-num">4</div> 4. Final Recommendation</div>
+    </div>
+
+    <div class="wizard-container">
+
+      <!-- =================================================================== -->
+      <!-- STAGE 1: VEHICLE PROFILE & SERVICE HISTORY ONLY                    -->
+      <!-- (No symptom questions here! User enters vehicle details peacefully) -->
+      <!-- =================================================================== -->
+      <div id="stage1VehicleProfile">
+        <div class="card">
+          <div class="card-title">
+            <span>🚗 Step 1 of 4: Enter Vehicle Details & Service History</span>
+            <span class="tag badge-tcs">Vehicle Profile</span>
+          </div>
+
+          <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
+            Please provide your vehicle details first. The diagnosis questions in Step 2 will be customized to match your vehicle's exact type and fuel system.
+          </div>
+
+          <div class="form-group">
+            <label>Vehicle Type</label>
+            <select id="vType" onchange="onVehicleTypeChange()">
+              <option value="Compact SUV / SUV" selected>Compact SUV / SUV</option>
+              <option value="Car / Sedan">Car / Sedan / Hatchback</option>
+              <option value="Two-Wheeler (Motorcycle / Scooter)">Two-Wheeler (Motorcycle / Scooter)</option>
+              <option value="Electric Vehicle (EV)">Electric Vehicle (EV - Car/SUV/Scooter)</option>
+              <option value="Commercial Mini-Truck">Commercial Mini-Truck / Pickup</option>
+            </select>
+          </div>
+
+          <div id="adaptiveAlert" class="adaptive-tag">
+            ⚡ Questions in Step 2 will be adapted for: <strong id="vTypeBadge">Compact SUV / SUV</strong>
+          </div>
+
+          <div class="grid" style="gap: 12px; margin-bottom: 0;">
+            <div class="col-6">
+              <div class="form-group">
+                <label>Vehicle Brand</label>
+                <input type="text" id="vBrand" value="Hyundai" placeholder="e.g. Hyundai, Maruti Suzuki, Tata, Royal Enfield">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Vehicle Model</label>
+                <input type="text" id="vModel" value="Creta" placeholder="e.g. Creta, Swift, Nexon, Classic 350, Tata Ace">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Manufacturing Year</label>
+                <input type="number" id="vYear" value="2025" min="2000" max="2027">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Fuel Type</label>
+                <select id="vFuel" onchange="onFuelTypeChange()">
+                  <option value="Petrol" selected>Petrol</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="CNG">CNG</option>
+                  <option value="EV">Electric (EV)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid #1e293b; padding-top: 14px; margin-top: 8px;">
+            <div style="font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 10px;">
+              📅 Service History & Mileage
+            </div>
+            
+            <div class="grid" style="gap: 12px; margin-bottom: 0;">
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Current Mileage / Odometer (km)</label>
+                  <input type="number" id="vOdo" value="42000" placeholder="e.g. 42000">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Last Service Date</label>
+                  <input type="date" id="vLastService" value="2026-03-15">
+                </div>
+              </div>
+            </div>
+
+            
+            <div class="form-group" style="margin-top: 14px; background: #071527; padding: 12px; border-radius: 8px; border: 1px solid #1e3a8a;">
+              <label style="font-weight: 700; color: #38bdf8; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
+                <span>🔧 Target Part / Component to Inspect or Replace:</span>
+                <span class="tag badge-aiml" style="font-size: 10px;">Service Triggers</span>
+              </label>
+              <div style="font-size: 11.5px; color: #94a3b8; margin-bottom: 6px;">
+                Select a specific component to run targeted diagnostic checks framed on its replacement trigger, or keep "General Diagnosis" to assess by symptoms:
+              </div>
+              <select id="sTargetPart" onchange="onTargetPartChange()" style="border-color: #38bdf8; background: #0c1e3a; font-weight: 600;">
+                <option value="NONE" selected>-- None / General Symptom Diagnosis --</option>
+                <option value="ENGINE_OIL">Engine oil — Usually replaced when: Service interval reached</option>
+                <option value="OIL_FILTER">Oil filter — Usually replaced when: Usually with engine oil</option>
+                <option value="AIR_FILTER">Air filter — Usually replaced when: Dirty/clogged</option>
+                <option value="CABIN_AC_FILTER">Cabin/AC filter — Usually replaced when: When dirty / reduced airflow</option>
+                <option value="FUEL_FILTER">Fuel filter — Usually replaced when: At specified intervals</option>
+                <option value="SPARK_PLUGS">Spark plugs — Usually replaced when: Petrol vehicles, specified mileage/condition</option>
+                <option value="BRAKE_PADS_SHOES">Brake pads/shoes — Usually replaced when: Excessive wear</option>
+                <option value="BRAKE_FLUID">Brake fluid — Usually replaced when: Periodically / interval reached / contaminated</option>
+                <option value="COOLANT">Coolant — Usually replaced when: Periodically / interval reached / contaminated</option>
+                <option value="TRANSMISSION_OIL">Transmission/gearbox oil — Usually replaced when: As specified / interval reached</option>
+                <option value="WIPER_BLADES">Wiper blades — Usually replaced when: Poor wiping / cracked / damaged / worn</option>
+                <option value="BATTERY_ELECTRICAL">Battery — Usually replaced when: Weak or failing</option>
+                <option value="DRIVE_BELTS">Belts (Timing / Serpentine) — Usually replaced when: Cracked / worn / interval reached</option>
+                <option value="TYRES">Tyres — Usually replaced when: Low tread / damage / worn</option>
+                <option value="CLUTCH_COMPONENTS">Clutch components — Usually replaced when: When worn / slipping</option>
+                <option value="SUSPENSION_COMPONENTS">Suspension components — Usually replaced when: When damaged / worn</option>
+                <option value="LIGHTS_FUSES">Light bulbs/fuses — Usually replaced when: When faulty / blown</option>
+              </select>
+              <div id="targetPartTriggerInfo" style="display: none; background: #0c1e3a; border-left: 3px solid #38bdf8; padding: 6px 10px; margin-top: 8px; border-radius: 4px; font-size: 11.5px; color: #93c5fd;">
+                📌 <strong>Standard Service Rule:</strong> <span id="targetPartTriggerText"></span>
+              </div>
+            </div>
+
+<label style="font-size: 11.5px; color: var(--text-muted); font-weight: 500; display: block; margin-top: 6px;">
+              Which parts were REPLACED at last service?
+            </label>
+            <div class="checklist-grid" id="partsChecklistContainer" style="margin-bottom: 12px;">
+              <!-- Dynamically populated based on vehicle type -->
+            </div>
+
+            <div class="form-group">
+              <label>Recent Accident or Underside Impact?</label>
+              <select id="vAccident">
+                <option value="No" selected>No accidents or impacts</option>
+                <option value="Yes - Minor pothole / speed breaker hit">Minor pothole / speed breaker impact</option>
+                <option value="Yes - Body collision">Yes - Collision / Body damage</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" style="width: 100%; font-size: 13.5px; padding: 12px; font-weight: 700; margin-top: 8px;" onclick="goToSymptomsStage()">
+            Proceed to Step 2: Problem & Symptoms Questionnaire ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE 2: PROBLEM & SYMPTOMS QUESTIONNAIRE                           -->
+      <!-- (Appears only after Step 1 is completed!)                           -->
+      <!-- =================================================================== -->
+      <div id="stage2Symptoms" style="display: none;">
+        <div class="card">
+          
+          <!-- Summary Banner of Vehicle from Step 1 -->
+          <div class="vehicle-summary-strip">
+            <div class="vehicle-summary-text">
+              <span>🚗 Selected Vehicle:</span>
+              <strong id="sumVehicleText" style="color:#fff;">Hyundai Creta (2025, Petrol) | 42,000 km</strong>
+            </div>
+            <button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="backToStage1()">
+              ✏️ Edit Vehicle
+            </button>
+          </div>
+
+          <div class="card-title">
+            <span>🩺 Step 2 of 4: Describe the Problem & Symptoms</span>
+            <span class="tag badge-aiml" id="questionnaireTag">Vehicle-Tailored Logic</span>
+          </div>
+
+          <!-- Highlight card for chosen part if selected -->
+          <div id="stage2PartHighlightBox" style="display: none; background: #071527; border: 1px solid #1e3a8a; border-left: 4px solid #38bdf8; border-radius: 6px; padding: 12px 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 700;">Targeted Component for Diagnosis:</div>
+                <div style="font-size: 16px; font-weight: 800; color: #38bdf8;" id="stage2PartTitle">Part Name</div>
+                <div style="font-size: 12px; color: #cbd5e1; margin-top: 2px;" id="stage2PartTrigger">Usually replaced when: ...</div>
+              </div>
+              <button class="btn" style="padding: 4px 8px; font-size: 11px;" onclick="clearTargetPart()">Reset to General</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Questions Framed Specifically for this Part -->
+          <div id="stage2FramedQuestionsCard" style="display: none; background: #0c1e3a; border: 1px solid #38bdf8; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="font-size: 13.5px; font-weight: 700; color: #38bdf8;">
+                🔍 Targeted Inspection Questions (<span id="framedCheckPartName">Component</span>)
+              </span>
+              <span class="tag badge-sc" style="font-size: 10px;">Condition Checklist</span>
+            </div>
+            <div style="font-size: 11.5px; color: #94a3b8; margin-bottom: 10px;">
+              These questions are specifically framed to evaluate whether this component requires immediate replacement:
+            </div>
+            <div id="stage2FramedQuestionsBody"></div>
+          </div>
+
+
+          <div class="form-group">
+            <label>What problem are you experiencing? (Describe in plain words)</label>
+            <textarea id="sProblemDesc" placeholder="Describe the symptom in plain words..."></textarea>
+          </div>
+
+          <div class="grid" style="gap: 10px;">
+            <div class="col-6">
+              <div class="form-group">
+                <label>When does it happen?</label>
+                <select id="sWhen">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Is it continuous or occasional?</label>
+                <select id="sFrequency">
+                  <option value="Continuous" selected>Continuous (Happens every time)</option>
+                  <option value="Occasional">Occasional (Comes and goes intermittently)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Any unusual sound?</label>
+                <select id="sSound">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Any unusual smell?</label>
+                <select id="sSmell">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Smoke / Color of smoke?</label>
+                <select id="sSmoke">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Vehicle starting problem?</label>
+                <select id="sStart">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Reduced power / performance?</label>
+                <select id="sPower">
+                  <option value="No" selected>No - Acceleration is normal</option>
+                  <option value="Yes">Yes - Hesitation / noticeable power loss</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Reduced mileage / battery range?</label>
+                <select id="sMileage">
+                  <option value="No" selected>No - Consumption / range is normal</option>
+                  <option value="Yes">Yes - Significant drop in mileage / range</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6" id="grpOverheat">
+              <div class="form-group">
+                <label id="lblOverheat">Overheating?</label>
+                <select id="sOverheat">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Vibration / shaking?</label>
+                <select id="sVibration">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Dashboard Warning Light ON?</label>
+                <select id="sWarningLight">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label>Upload Dashboard Photo (Optional)</label>
+                <input type="file" id="fDashPhoto" accept="image/*" onchange="previewDashboardPhoto(event)">
+              </div>
+              <div id="photoPreviewBox" style="display:none; font-size:11px; color:var(--success); margin-top:2px;">
+                📷 Dashboard photo attached for visual analysis.
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; gap:12px; margin-top:16px;">
+            <button class="btn" style="padding:10px 18px;" onclick="backToStage1()">
+              ⬅ Back to Vehicle Profile
+            </button>
+            <button class="btn btn-primary" style="flex:1; font-size:13.5px; padding:11px; font-weight:700;" onclick="submitSymptomsStage()">
+              Step 2 ➔ Run AI Assessment & Generate Checks
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE 3: SUGGESTED CHECKS & USER ANSWERS                            -->
+      <!-- =================================================================== -->
+      <div id="stage3Checks" style="display: none;">
+        <div class="card" style="border-left: 4px solid var(--accent);">
+          <div class="card-title">
+            <span>Step 3 of 4: AI Suspected Issue & Suggested Checks</span>
+            <span class="tag badge-aiml" id="wizAiBadge">Subsystem</span>
+          </div>
+          
+          <div style="background:#070b14; border:1px solid #1e293b; border-radius:8px; padding:14px; margin-bottom: 14px;">
+            <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">Possible Problem Identified:</div>
+            <div style="font-size:18px; font-weight:800; color:var(--accent); margin-bottom:4px;" id="wizSuspectedTitle">Identified Problem Title</div>
+            <div style="font-size:12px; color:var(--text-muted);" id="wizConfidenceText">AI Confidence: 92% based on reported symptoms.</div>
+          </div>
+
+          <div style="font-size:13px; font-weight:700; color:#fff; margin-bottom:10px;">
+            Please perform these quick checks on your vehicle and select what you observe:
+          </div>
+          
+          <!-- Dynamic Questions Container -->
+          <div id="wizQuestionsContainer">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div style="display:flex; justify-content:space-between; gap:12px; margin-top:14px;">
+            <button class="btn" style="padding:10px 18px;" onclick="backToStage2()">
+              ⬅ Back to Symptoms
+            </button>
+            <button class="btn btn-success" style="flex:1; font-size:13.5px; padding:12px; font-weight:700;" onclick="submitChecksStage()">
+              Submit Results & Get Final DIY / Mechanic Decision ➔
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- STAGE 4: FINAL RECOMMENDATION (🟢 DIY | 🟡 Inspection | 🔴 Mechanic)-->
+      <!-- =================================================================== -->
+      <div id="stage4Decision" style="display: none;">
+        
+        <!-- 3-Tier Classification Banner -->
+        <div class="decision-banner" id="decBannerBox">
+          <div style="font-size: 38px;" id="decEmoji">🟢</div>
+          <div>
+            <div class="decision-badge-text" id="decBadgeText">🟢 DIY REPAIRABLE</div>
+            <div class="decision-meaning" id="decMeaningText">Safe and simple checking/repair can be done by the owner at home with standard tools.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-title">
+            <span>Action Plan & Required Instructions</span>
+            <span class="tag badge-aiml">Expert Guide</span>
+          </div>
+
+          <div style="background:#070b14; border:1px solid #1e293b; border-radius:8px; padding:14px; margin-bottom:14px;">
+            <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">Recommended Action:</div>
+            <div style="font-size:16px; font-weight:700; color:var(--accent); line-height:1.4;" id="decPrimaryAction">Action text</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:14px;">
+            <div style="background:#070b14; padding:10px; border-radius:6px; border:1px solid #1e293b; font-size:11.5px;">
+              <span style="color:var(--text-muted); display:block;">Est. Labor Time:</span>
+              <strong id="decTime" style="color:#fff;">15 - 20 minutes</strong>
+            </div>
+            <div style="background:#070b14; padding:10px; border-radius:6px; border:1px solid #1e293b; font-size:11.5px;">
+              <span style="color:var(--text-muted); display:block;">Cost Estimate:</span>
+              <strong id="decCost" style="color:var(--accent);">₹0 - ₹100</strong>
+            </div>
+            <div style="background:#070b14; padding:10px; border-radius:6px; border:1px solid #1e293b; font-size:11.5px;">
+              <span style="color:var(--text-muted); display:block;">Tools Needed:</span>
+              <strong id="decTools" style="color:#fff;">Tools list</strong>
+            </div>
+          </div>
+
+          <div style="font-size:12.5px; font-weight:700; text-transform:uppercase; color:#fff; margin-bottom:8px;">Step-by-Step Instructions:</div>
+          <div id="decStepsList"></div>
+        </div>
+
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-title"><span>Diagnostic Verification Summary</span></div>
+          <div style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;">Observations Recorded:</div>
+          <div id="decFindingsList" style="display:flex; flex-direction:column; gap:6px;"></div>
+
+          <div style="margin-top:14px; padding-top:12px; border-top:1px solid #1e293b;">
+            <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:4px;">
+              <span style="color:var(--text-muted);">Soft Computing Decision Score:</span>
+              <strong id="decFuzzyScore" style="color:#fff;">18 / 100</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:4px;">
+              <span style="color:var(--text-muted);">Mechanical Risk Index:</span>
+              <strong id="decRiskScore" style="color:var(--success);">Low (2.0 / 10)</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11.5px;">
+              <span style="color:var(--text-muted);">Repair Complexity:</span>
+              <strong id="decCompScore" style="color:var(--success);">Simple (2.5 / 10)</strong>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%; padding:12px; font-size:13px; font-weight:700;" onclick="resetWizard()">
+          ↺ Start New Vehicle Diagnosis
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: AI ACOUSTIC SOUND & SYMPTOM CHATBOT                               -->
+  <!-- ========================================================================= -->
+  <div id="tabChatbot" class="tab-content" style="display:none;">
+    <div class="card col-12" style="margin-bottom:16px;">
+      <div class="card-title">
+        <span>💬 AI Conversational Vehicle Diagnostic Assistant</span>
+        <span class="tag badge-aiml">Natural Language Diagnostics</span>
+      </div>
+      <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">
+        Type any strange sound, vibration, smoke color, or operational problem you hear or feel while driving:
+      </div>
+
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg chat-msg-bot">
+            👋 <strong>Hello! I am your AI Vehicle Diagnostic Assistant.</strong><br><br>
+            Tell me what unusual sound or symptom your vehicle is having!<br>
+            • <em>"My car makes a high-pitched squealing sound when I press brakes"</em><br>
+            • <em>"Motorcycle drive chain is rattling and slapping swingarm"</em><br>
+            • <em>"EV won't enter READY mode and 12V battery light is on"</em><br>
+            • <em>"Commercial mini-truck leaf spring clunking under payload"</em><br><br>
+            Type below or click any quick symptom chip!
+          </div>
+        </div>
+
+        <div class="chat-chips" id="chatChips">
+          <button class="chip-btn" onclick="sendQuickPrompt('Squealing noise when I press brakes')">🔊 Squeaking Brakes</button>
+          <button class="chip-btn" onclick="sendQuickPrompt('Metallic knocking sound from engine')">🔨 Engine Knocking</button>
+          <button class="chip-btn" onclick="sendQuickPrompt('Motorcycle chain loose and slapping')">🏍️ Chain Rattling</button>
+          <button class="chip-btn" onclick="sendQuickPrompt('EV fails to enter READY mode 12v dead')">⚡ EV Won't Start</button>
+          <button class="chip-btn" onclick="sendQuickPrompt('Steering wheel shakes at 90 km/h on highway')">📳 Steering Vibration</button>
+          <button class="chip-btn" onclick="sendQuickPrompt('Truck leaf spring squeaking and sagging')">🚚 Truck Leaf Spring</button>
+        </div>
+
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Type vehicle symptom or sound here... (Press Enter)" onkeypress="handleChatKey(event)">
+          <button class="btn btn-primary" onclick="sendChatMessage()">Send ➔</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: REAL-TIME TELEMETRY & ECU SENSOR COCKPIT                          -->
+  <!-- ========================================================================= -->
+  <div id="tabTelemetry" class="tab-content" style="display:none;">
+    <div class="card col-12" style="margin-bottom: 16px;">
+      <div class="card-title">
+        <span>Fault Injection Scenario Simulator</span>
+        <span style="font-size:12px; color:var(--text-muted);">Real-Time OBD-II CAN-Bus Telemetry</span>
+      </div>
+      <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;">
+        <button class="btn btn-active" onclick="setScenario('NORMAL_CRUISE')">Normal Cruise</button>
+        <button class="btn" onclick="setScenario('COOLANT_LEAK_OVERHEAT')">Coolant Leak & Overheat</button>
+        <button class="btn" onclick="setScenario('OIL_PUMP_FAILURE')">Oil Starvation</button>
+        <button class="btn" onclick="setScenario('ALTERNATOR_FAILURE')">Alternator Failure</button>
+        <button class="btn" onclick="setScenario('TRANSMISSION_SLIP')">Transmission Slip</button>
+        <button class="btn" id="btnAutoPlay" onclick="toggleAutoPlay()">▶ Start Stream</button>
+        <button class="btn btn-danger" onclick="resetSystem()">↺ Reset FSM</button>
+        <button class="btn" onclick="window.location.href='/api/export_dataset'">📥 Export CSV</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="col-4">
+        <div class="card" style="margin-bottom: 14px;">
+          <div class="card-title"><span>Live Sensor Telemetry</span></div>
+          <div class="telemetry-grid">
+            <div class="meter-box"><div class="meter-label">RPM</div><div class="meter-value" id="valRPM">2200</div></div>
+            <div class="meter-box"><div class="meter-label">Speed</div><div class="meter-value" id="valSpeed">65 km/h</div></div>
+            <div class="meter-box"><div class="meter-label">Coolant</div><div class="meter-value" id="valTemp">90°C</div></div>
+            <div class="meter-box"><div class="meter-label">Oil Press</div><div class="meter-value" id="valOil">48 PSI</div></div>
+            <div class="meter-box"><div class="meter-label">Voltage</div><div class="meter-value" id="valVolt">14.1V</div></div>
+            <div class="meter-box"><div class="meter-label">Vibration</div><div class="meter-value" id="valVib">1.2</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>Manual Sliders</span></div>
+          <div class="slider-row"><label>RPM</label><input type="range" id="slRpm" min="800" max="6500" value="2200" oninput="onSliderChange()"><span class="val" id="slRpmVal">2200</span></div>
+          <div class="slider-row"><label>Temp</label><input type="range" id="slTemp" min="50" max="140" value="90" oninput="onSliderChange()"><span class="val" id="slTempVal">90°C</span></div>
+          <div class="slider-row"><label>Oil</label><input type="range" id="slOil" min="0" max="80" value="48" oninput="onSliderChange()"><span class="val" id="slOilVal">48 PSI</span></div>
+          <div class="slider-row"><label>Volt</label><input type="range" id="slVolt" min="9.0" max="16.0" step="0.1" value="14.1" oninput="onSliderChange()"><span class="val" id="slVoltVal">14.1 V</span></div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title"><span>TCS Moore State Machine</span><span class="tag badge-tcs">Module I</span></div>
+          <div class="fsm-track">
+            <div class="fsm-node active" id="nodeS0"><div class="fsm-circle">S0</div><div class="fsm-node-label">NORMAL</div></div>
+            <div class="fsm-node" id="nodeS1"><div class="fsm-circle">S1</div><div class="fsm-node-label">ADVISORY</div></div>
+            <div class="fsm-node" id="nodeS2"><div class="fsm-circle">S2</div><div class="fsm-node-label">LIMP</div></div>
+            <div class="fsm-node" id="nodeS3"><div class="fsm-circle">S3</div><div class="fsm-node-label">CRITICAL</div></div>
+            <div class="fsm-node" id="nodeS4"><div class="fsm-circle">S4</div><div class="fsm-node-label">HALT</div></div>
+          </div>
+          <div style="background:#070b14; border:1px solid #1e293b; border-radius:6px; padding:10px; font-size:12px;">
+            <div>State: <strong id="mooreState">S0_NORMAL</strong> | Throttle: <strong id="mooreThrottle">100%</strong></div>
+            <div>Lamp: <strong id="mooreLamp">OFF</strong></div>
+            <div id="mooreMsg" style="color:var(--accent); margin-top:4px;">Full authority available.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>Soft Computing Fuzzy VHI</span><span class="tag badge-sc">Centroid FIS</span></div>
+          <div style="font-size:36px; font-weight:800; text-align:center; color:var(--success);" id="vhiScore">91%</div>
+          <div style="text-align:center; font-size:12px; color:var(--text-muted);" id="vhiGrade">Pristine Vehicle Health</div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title"><span>AIML Failure Prediction</span><span class="tag badge-aiml">Classifier</span></div>
+          <div style="background:#070b14; padding:10px; border-radius:6px; font-size:12px;">
+            <div style="font-weight:700; color:var(--accent);" id="aiClass">NORMAL_OPERATION</div>
+            <div style="color:var(--text-muted);" id="aiExplanation">Nominal parameters.</div>
+            <div style="margin-top:4px;">Confidence: <strong id="aiConfidence">98%</strong> | RUL: <strong id="rulKm">13,800 km</strong></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span>SAE J2012 DTC Scanner</span><span class="tag badge-tcs">Regex</span></div>
+          <div style="display:flex; gap:6px; margin-bottom:8px;">
+            <input type="text" id="dtcInspectInput" value="P0217">
+            <button class="btn" onclick="inspectDTC()">Validate</button>
+          </div>
+          <div id="dtcInspectResult" style="background:#070b14; padding:8px; border-radius:6px; font-size:11px; color:var(--text-muted);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: FACULTY VIVA DEFENSE & SYLLABUS MAPPING                            -->
+  <!-- ========================================================================= -->
+  <div id="tabFaculty" class="tab-content" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span>Syllabus Mapping: Theoretical Foundations of the Adaptive System</span></div>
+      <div style="font-size:13px; line-height:1.6; color:#e2e8f0;">
+        <p><strong>1. Theoretical Computer Science (TCS - 24CSPCC501C):</strong></p>
+        <ul style="margin-left:20px; margin-bottom:12px; color:var(--text-muted);">
+          <li><strong>Finite Automata (Module I):</strong> The 4-step diagnostic wizard runs on a formal sequential DFA: <code>Q = {S_VEHICLE_PROFILE, S_SYMPTOMS_QUESTIONNAIRE, S_DIAGNOSTIC_CHECKS, S_FINAL_DECISION}</code>, ensuring progressive state transitions with clean backward navigation.</li>
+          <li><strong>Context-Sensitive Grammar (Module III):</strong> Restricts input symptom alphabets based on the vehicle domain $V \in \{	ext{CAR}, 	ext{TWO\_WHEELER}, 	ext{EV}, 	ext{COMMERCIAL\_TRUCK}\}$. Impossible states (e.g. asking an EV owner about engine oil or exhaust smoke) are eliminated through formal state constraints.</li>
+        </ul>
+
+        <p><strong>2. Soft Computing (SC - 24CSPCC502C):</strong></p>
+        <ul style="margin-left:20px; margin-bottom:12px; color:var(--text-muted);">
+          <li><strong>Mamdani Fuzzy Inference System (Module 2):</strong> Powers the <strong>🟢 DIY vs 🟡 Inspection vs 🔴 Mechanic</strong> decision boundary. Fuzzifies Mechanical Risk ($R$), Repair Complexity ($C$), and Check Severity ($S$) into linguistic sets and calculates the crisp classification threshold using Centroid Defuzzification (Center of Gravity / COG).</li>
+        </ul>
+
+        <p><strong>3. Artificial Intelligence & Machine Learning (AIML):</strong></p>
+        <ul style="margin-left:20px; margin-bottom:12px; color:var(--text-muted);">
+          <li><strong>Contextual Symptom Classifier:</strong> Expert decision tree evaluating user symptoms (chain slack, battery voltage, brake wear, charging fault) conditioned on vehicle architecture.</li>
+          <li><strong>Adaptive Diagnostic Question Engine:</strong> Automatically tailors targeted physical check questions according to the identified subsystem.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).style.display = 'block';
+      event.target.classList.add('active');
+    }
+
+    // =========================================================================
+    // 17 COMMONLY REPLACED PARTS & FRAMED QUESTION DEFINITIONS
+    // =========================================================================
+    const COMMONLY_REPLACED_PARTS = {
+      "ENGINE_OIL": {
+        name: "Engine Oil",
+        trigger: "Service interval reached (10,000 km or 1 year)",
+        questions: [
+          {
+            id: "oil_service_interval",
+            text: "Has the vehicle reached its scheduled engine oil service interval?",
+            options: [
+              "Within interval (< 8,000 km / 10 months since last change)",
+              "Service interval reached (~10,000 km / 12 months)",
+              "Overdue for oil change (> 12,000 km / 1.5+ years)"
+            ]
+          },
+          {
+            id: "dipstick_level_color",
+            text: "Pull out and wipe engine dipstick: What is the oil level and color?",
+            options: [
+              "Amber / Golden brown and between MIN and MAX marks",
+              "Dark brown / black but slippery and at correct level",
+              "Critically low (below MIN mark) or pitch black with gritty residue"
+            ]
+          },
+          {
+            id: "oil_pressure_smell",
+            text: "Is there an oil warning light on the dashboard, metallic ticking, or a burning oil smell?",
+            options: [
+              "None - Engine runs quietly with no warning lights",
+              "Faint burning oil smell after high-speed highway driving",
+              "Red oil canister light glowing or audible metallic tapping from engine"
+            ]
+          }
+        ]
+      },
+      "OIL_FILTER": {
+        name: "Oil Filter",
+        trigger: "Usually with engine oil at every service",
+        questions: [
+          {
+            id: "filter_change_history",
+            text: "Was the oil filter replaced simultaneously during the last oil change?",
+            options: [
+              "Yes - Brand new OEM filter element installed with fresh oil",
+              "No - Only oil was changed; old filter was left in place",
+              "Uncertain / Service history not documented"
+            ]
+          },
+          {
+            id: "filter_leakage_seepage",
+            text: "Inspect around the oil filter canister base or housing under the engine:",
+            options: [
+              "Completely dry and clean around filter sealing gasket",
+              "Minor oily road grime / slight weeping around rubber O-ring",
+              "Active oil dripping or filter canister dented / loose"
+            ]
+          }
+        ]
+      },
+      "AIR_FILTER": {
+        name: "Air Filter",
+        trigger: "Dirty / clogged with dust, soot, or debris",
+        questions: [
+          {
+            id: "air_filter_visual",
+            text: "Unclip air cleaner housing box and inspect the paper filter element against light:",
+            options: [
+              "Clean white or yellow paper pleats with light shining through",
+              "Dusty gray surface with minor dust in pleat valleys",
+              "Heavily blackened with soot, trapped dried leaves, or clogged solid"
+            ]
+          },
+          {
+            id: "engine_breathing_power",
+            text: "Does the engine struggle to breathe, hesitate on throttle revs, or blow black smoke?",
+            options: [
+              "Smooth instantaneous throttle response across rev range",
+              "Mild sluggishness when accelerating uphill",
+              "Noticeable power loss, engine bogging, or heavy black exhaust smoke"
+            ]
+          }
+        ]
+      },
+      "CABIN_AC_FILTER": {
+        name: "Cabin / AC Filter",
+        trigger: "When dirty / reduced airflow / musty odor",
+        questions: [
+          {
+            id: "ac_airflow_throw",
+            text: "Set AC blower fan speed to maximum: How strong is the air velocity from vents?",
+            options: [
+              "Powerful blast of chilled air across all vents",
+              "Airflow feels weaker than usual despite high fan speed",
+              "Very feeble trickle of air; blower motor whines under strain"
+            ]
+          },
+          {
+            id: "cabin_smell_odour",
+            text: "What does the air smell like when you first switch ON the air conditioning?",
+            options: [
+              "Neutral, fresh, and odorless air",
+              "Faint stale air for the first 10 seconds",
+              "Unpleasant musty, sour vinegar, or damp mildew odor entering cabin"
+            ]
+          }
+        ]
+      },
+      "FUEL_FILTER": {
+        name: "Fuel Filter",
+        trigger: "At specified service intervals (every 30,000–40,000 km)",
+        questions: [
+          {
+            id: "fuel_filter_mileage",
+            text: "How many kilometers has the vehicle driven since the fuel filter was last replaced?",
+            options: [
+              "Under 20,000 km (Recent filter replacement)",
+              "20,000 to 40,000 km (Approaching manufacturer specified interval)",
+              "Over 40,000 km or never replaced since purchase"
+            ]
+          },
+          {
+            id: "acceleration_hesitation",
+            text: "Does the engine jerk, stutter, or lose momentum under hard acceleration or hill climbing?",
+            options: [
+              "Pulls smoothly with consistent fuel delivery",
+              "Occasional hesitation or flat spot above 3,500 RPM",
+              "Severe jerking, engine sputtering, or cutting out under load"
+            ]
+          }
+        ]
+      },
+      "SPARK_PLUGS": {
+        name: "Spark Plugs",
+        trigger: "Petrol vehicles, at specified mileage (20k-40k km) / condition",
+        questions: [
+          {
+            id: "spark_plug_mileage",
+            text: "What is the recorded mileage on the current set of spark plugs?",
+            options: [
+              "Under 20,000 km (Standard plugs) or under 60,000 km (Iridium plugs)",
+              "20,000 to 40,000 km (Standard copper/nickel plugs due for replacement)",
+              "Over 40,000 km (Standard) or over 100,000 km (Iridium overdue)"
+            ]
+          },
+          {
+            id: "idle_stability",
+            text: "How does the engine idle when stopped at a red traffic light?",
+            options: [
+              "Rock steady idle RPM with negligible engine vibration",
+              "Slight intermittent tachometer needle flutter or vibration",
+              "Noticeable engine shaking, rough misfiring idle, or Check Engine light flashing"
+            ]
+          }
+        ]
+      },
+      "BRAKE_PADS_SHOES": {
+        name: "Brake Pads / Shoes",
+        trigger: "Excessive wear (< 3mm friction lining) / squealing / grinding",
+        questions: [
+          {
+            id: "pad_lining_thickness",
+            text: "Look through wheel spokes at the outer brake pad: Estimate friction lining thickness:",
+            options: [
+              "Generous friction material remaining (> 6 mm)",
+              "Moderate wear (3 mm to 5 mm - replacement due soon)",
+              "Critically thin (< 3 mm) or backing plate almost touching disc rotor"
+            ]
+          },
+          {
+            id: "brake_sound_type",
+            text: "What acoustic sound is produced when stepping on the brake pedal?",
+            options: [
+              "Completely silent stopping",
+              "High-pitched screech or squeal (acoustic metal wear indicator tab)",
+              "Harsh metallic grinding or scraping sound (metal backing plate on iron rotor)"
+            ]
+          }
+        ]
+      },
+      "BRAKE_FLUID": {
+        name: "Brake Fluid",
+        trigger: "Periodically / interval reached (every 2 years) / contaminated",
+        questions: [
+          {
+            id: "fluid_reservoir_color",
+            text: "Inspect translucent brake master cylinder reservoir under the bonnet: What is fluid color?",
+            options: [
+              "Clear, transparent light amber/honey fluid between MIN and MAX marks",
+              "Dark amber tea color with level near MIN mark",
+              "Pitch dark brown / cloudy murky black fluid or moisture tester > 3%"
+            ]
+          },
+          {
+            id: "pedal_firmness_travel",
+            text: "How does the brake pedal feel when firmly pressed with engine running?",
+            options: [
+              "Firm resistance with short pedal travel and high bite point",
+              "Slightly soft pedal requiring deeper push to achieve full braking force",
+              "Spongy pedal that sinks slowly toward floorboard or requires pumping"
+            ]
+          }
+        ]
+      },
+      "COOLANT": {
+        name: "Coolant",
+        trigger: "Periodically / interval reached (every 2-3 years) / contaminated",
+        questions: [
+          {
+            id: "coolant_color_clarity",
+            text: "With engine cold, check expansion reservoir: What is fluid level and visual condition?",
+            options: [
+              "Bright clear translucent Green, Pink, or Blue coolant at MAX mark",
+              "Level is low near MIN line but fluid is clean",
+              "Rusty brown murky fluid, oily sludge floating, or reservoir empty"
+            ]
+          },
+          {
+            id: "temperature_gauge_behavior",
+            text: "How does the instrument cluster engine temperature gauge behave while driving?",
+            options: [
+              "Pointer locks solidly at normal midpoint (85°C – 92°C)",
+              "Creeps higher during heavy traffic or slow hill climbs",
+              "Spikes into red danger zone, steam from under bonnet, or high temp lamp ON"
+            ]
+          }
+        ]
+      },
+      "TRANSMISSION_OIL": {
+        name: "Transmission / Gearbox Oil",
+        trigger: "As specified by OEM (40,000–80,000 km) / hard shifting",
+        questions: [
+          {
+            id: "gearbox_service_mileage",
+            text: "What is the service mileage on the current transmission / gear oil?",
+            options: [
+              "Within manufacturer interval (< 40,000 km)",
+              "Approaching specified interval (40,000 to 60,000 km)",
+              "Exceeded specified interval (> 60,000 km) or never replaced"
+            ]
+          },
+          {
+            id: "gear_shifting_feel",
+            text: "How does the gear lever feel when shifting between gears?",
+            options: [
+              "Smooth, effortless gear engagement with crisp gate slotting",
+              "Stiff or notchy shift lever, especially during cold starts into 1st/2nd gear",
+              "Hard metallic crunching, grinding into gear, or transmission slipping"
+            ]
+          }
+        ]
+      },
+      "WIPER_BLADES": {
+        name: "Wiper Blades",
+        trigger: "Poor wiping / cracked rubber / streaking / damaged / worn",
+        questions: [
+          {
+            id: "wiper_glass_clearing",
+            text: "Operate windshield wipers with washer spray: How effectively is water cleared?",
+            options: [
+              "Clean, silent, crystal-clear single sweep with zero streaks",
+              "Leaves thin water lines or light hazy film in driver line of sight",
+              "Broad un-wiped water bands, severe water smearing, or violent chattering"
+            ]
+          },
+          {
+            id: "rubber_edge_inspection",
+            text: "Lift wiper arms off windshield and slide fingertips along rubber squeegee blade:",
+            options: [
+              "Pliable, razor-sharp straight rubber lip with no imperfections",
+              "Hardened or stiff rubber with microscopic nicks along edge",
+              "Rubber edge is torn, split, cracked, or flapping loose from metal frame"
+            ]
+          }
+        ]
+      },
+      "BATTERY_ELECTRICAL": {
+        name: "Battery (12V)",
+        trigger: "Weak / failing / slow cranking / failed (3-4 years)",
+        questions: [
+          {
+            id: "starter_crank_speed",
+            text: "How does the engine crank on a cold morning start?",
+            options: [
+              "Crisp, rapid crank and starts within 1-2 seconds",
+              "Sluggish 'chug... chug... vroom' with mild instrument cluster dimming",
+              "Rapid clicking sound, dashboard lights go black, or engine will not crank"
+            ]
+          },
+          {
+            id: "terminal_corrosion_crust",
+            text: "Inspect battery terminal posts under the hood:",
+            options: [
+              "Clean, tight lead clamps with zero corrosion",
+              "Light white or blue powdery sulfate crust on terminal posts",
+              "Heavy corrosion buildup, loose clamps, or swollen/bulging battery case"
+            ]
+          }
+        ]
+      },
+      "DRIVE_BELTS": {
+        name: "Belts (Timing / Serpentine)",
+        trigger: "Cracked / worn / interval reached / loud squealing",
+        questions: [
+          {
+            id: "belt_acoustic_squeal",
+            text: "Does the engine bay emit a piercing high-pitched screeching or chirping sound?",
+            options: [
+              "Completely silent belt operation",
+              "Brief 5-second chirp on wet or cold morning startup that disappears",
+              "Continuous loud screeching during revving, steering lock, or AC engagement"
+            ]
+          },
+          {
+            id: "ribbed_underside_cracks",
+            text: "Examine the ribbed underside of the serpentine belt using a bright flashlight:",
+            options: [
+              "Smooth, pliable black rubber ribs with no cracks or fraying",
+              "Minor superficial hairline cracks spaced over 1 inch apart",
+              "Multiple deep transverse cracks per rib, chunks of rubber missing, or frayed cords"
+            ]
+          }
+        ]
+      },
+      "TYRES": {
+        name: "Tyres",
+        trigger: "Low tread (< 1.6mm / TWI) / damage / sidewall crack / worn",
+        questions: [
+          {
+            id: "tread_wear_indicator",
+            text: "Check tyre tread relative to the built-in Tread Wear Indicator (TWI) bridge bars in grooves:",
+            options: [
+              "Generous tread depth well above wear bars (> 4.0 mm remaining)",
+              "Tread approaching wear bars (2.0 mm to 3.0 mm remaining)",
+              "Tread flush with TWI bars (< 1.6 mm legal limit) or bald smooth patches"
+            ]
+          },
+          {
+            id: "sidewall_damage_cuts",
+            text: "Inspect outer and inner tyre sidewalls for physical trauma:",
+            options: [
+              "Clean, uniform sidewall with zero cracks or bulges",
+              "Fine micro-cracking from sun weathering or mild curb scuffing",
+              "Visible sidewall bubble/egg, deep cuts exposing internal nylon cords"
+            ]
+          }
+        ]
+      },
+      "CLUTCH_COMPONENTS": {
+        name: "Clutch Components",
+        trigger: "When worn / slipping / hard pedal / high bite point",
+        questions: [
+          {
+            id: "clutch_slipping_acceleration",
+            text: "In 3rd gear at 40 km/h, press the accelerator pedal firmly to the floor: What happens?",
+            options: [
+              "Vehicle road speed climbs smoothly and proportionally with engine RPM",
+              "Slight momentary lag before road speed matches engine acceleration",
+              "Engine RPM flares and screams upwards but vehicle fails to accelerate (Clutch Slip)"
+            ]
+          },
+          {
+            id: "clutch_pedal_bite_point",
+            text: "Where does the clutch begin to grab ('bite point') as you lift your left foot off pedal?",
+            options: [
+              "Comfortable bite in lower or middle third of pedal travel",
+              "Bite point has migrated high up, near the very top of pedal release",
+              "Heavy stiff pedal effort, or vehicle violently judders/shudders on take-off"
+            ]
+          }
+        ]
+      },
+      "SUSPENSION_COMPONENTS": {
+        name: "Suspension Components",
+        trigger: "When damaged / worn / clunking over bumps / excessive bounce",
+        questions: [
+          {
+            id: "suspension_clunk_noises",
+            text: "What sounds occur when driving over speed humps, potholes, or uneven village roads?",
+            options: [
+                "Firm, muted thud with instant vehicle body stabilization",
+                "Occasional hollow rattling or rubber squeaking over rough patches",
+                "Harsh metallic clunking, banging, or knocking from front or rear wheels"
+            ]
+          },
+          {
+            id: "fender_rebound_bounce",
+            text: "Firmly push down on each corner vehicle fender above the tyre and release quickly:",
+            options: [
+                "Rises up once and immediately settles into resting height",
+                "Bounces twice before coming to rest (Weak shock damping)",
+                "Continues to bounce or oscillate multiple times (Blown shock absorber)"
+            ]
+          }
+        ]
+      },
+      "LIGHTS_FUSES": {
+        name: "Light Bulbs / Fuses",
+        trigger: "When faulty / blown filament / melted fuse / non-functional",
+        questions: [
+          {
+            id: "lighting_failure_scope",
+            text: "Turn ON exterior lighting switches (Headlights, High Beam, Tail, Brake, Turn signals):",
+            options: [
+                "All exterior lamps and cabin illumination lights illuminate brightly",
+                "A single individual headlight, brake light, or turn indicator bulb is unlit",
+                "Entire lighting circuit (both headlights, all tail lamps, or entire dashboard) is dead"
+            ]
+          },
+          {
+            id: "fuse_box_inspection",
+            text: "Open the interior or engine-bay fuse box: What is the physical state of the fuse?",
+            options: [
+                "Metal wire link inside transparent fuse housing is continuous and intact",
+                "Internal metal link is broken / melted through or blackened",
+                "Fuse blew immediately again after inserting a new replacement fuse (Short circuit)"
+            ]
+          }
+        ]
+      }
+    };
+
+    function onTargetPartChange() {
+      const val = document.getElementById('sTargetPart').value;
+      const infoBox = document.getElementById('targetPartTriggerInfo');
+      const textSpan = document.getElementById('targetPartTriggerText');
+
+      if (val !== 'NONE' && COMMONLY_REPLACED_PARTS[val]) {
+        const item = COMMONLY_REPLACED_PARTS[val];
+        textSpan.innerText = `${item.name} is usually replaced when: ${item.trigger}`;
+        infoBox.style.display = 'block';
+      } else {
+        infoBox.style.display = 'none';
+      }
+    }
+
+    function clearTargetPart() {
+      document.getElementById('sTargetPart').value = 'NONE';
+      onTargetPartChange();
+      document.getElementById('stage2PartHighlightBox').style.display = 'none';
+      document.getElementById('stage2FramedQuestionsCard').style.display = 'none';
+    }
+
+    function renderStage2FramedQuestions(partKey) {
+      const container = document.getElementById('stage2FramedQuestionsBody');
+      container.innerHTML = '';
+      const partObj = COMMONLY_REPLACED_PARTS[partKey];
+      if (!partObj || !partObj.questions) return;
+
+      document.getElementById('framedCheckPartName').innerText = partObj.name;
+
+      partObj.questions.forEach((q, qIdx) => {
+        const qBox = document.createElement('div');
+        qBox.style.background = '#071527';
+        qBox.style.border = '1px solid #1e3a8a';
+        qBox.style.borderRadius = '6px';
+        qBox.style.padding = '10px 12px';
+        qBox.style.marginBottom = '10px';
+
+        const qTitle = document.createElement('div');
+        qTitle.style.fontSize = '12px';
+        qTitle.style.fontWeight = '700';
+        qTitle.style.color = '#fff';
+        qTitle.style.marginBottom = '6px';
+        qTitle.innerText = `${qIdx + 1}. ${q.text}`;
+        qBox.appendChild(qTitle);
+
+        const optGrid = document.createElement('div');
+        optGrid.className = 'q-options-grid';
+
+        q.options.forEach((optText, optIdx) => {
+          const btn = document.createElement('button');
+          btn.className = 'q-opt-btn' + (optIdx === 0 ? ' selected' : '');
+          btn.innerText = optText;
+          btn.onclick = function() {
+            optGrid.querySelectorAll('.q-opt-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            userCheckAnswers[q.id] = optText;
+          };
+          optGrid.appendChild(btn);
+          if (optIdx === 0) {
+            userCheckAnswers[q.id] = optText;
+          }
+        });
+
+        qBox.appendChild(optGrid);
+        container.appendChild(qBox);
+      });
+    }
+
+
+    // =========================================================================
+    // DYNAMIC VEHICLE-TYPE & FUEL-TYPE CONDITIONAL FORM ADAPTATION
+    // =========================================================================
+    const VEHICLE_CONFIGS = {
+      "Compact SUV / SUV": {
+        badge: "Compact SUV / SUV",
+        brandPlaceholder: "e.g. Hyundai Creta, Tata Nexon, Mahindra XUV700",
+        fuels: ["Petrol", "Diesel", "CNG", "EV"],
+        defaultFuel: "Petrol",
+        whenOptions: [
+          "Starting engine / Cold start",
+          "Engine idling at traffic signal",
+          "Hard acceleration / Revving up",
+          "Highway speeds (80-110 km/h)",
+          "Applying brakes / Decelerating",
+          "Sharp steering turns / U-turn",
+          "Driving over speed bumps / rough roads"
+        ],
+        soundOptions: [
+          "None - Silent",
+          "Rapid clicking sound while starting (No crank)",
+          "High-pitched brake squealing / screeching",
+          "Metallic knocking / tapping from engine",
+          "Screeching serpentine belt on cold start or AC",
+          "Rough grinding / metal scraping on brakes",
+          "Hissing noise from AC vents or radiator",
+          "Deep roaring / humming varying with vehicle speed"
+        ],
+        smellOptions: [
+          "None",
+          "Burning engine oil odor",
+          "Sweet syrupy smell (Coolant / Antifreeze)",
+          "Rotten egg / sulfur smell (Catalytic converter)",
+          "Burning rubber or plastic smell",
+          "Raw petrol / unburnt fuel smell"
+        ],
+        smokeOptions: [
+          "None / Normal clear exhaust",
+          "Thick sweet-smelling white smoke (Head Gasket Hazard)",
+          "Blue / gray smoke (Burning engine oil)",
+          "Heavy black smoke (Rich fuel mixture)"
+        ],
+        startOptions: [
+          "No - Starts instantly",
+          "Yes - Will not start / Clicking only",
+          "Slow sluggish crank, then catches"
+        ],
+        overheatLabel: "Engine Overheating?",
+        overheatOptions: [
+          "No - Temperature needle dead center",
+          "Temperature needle climbing into red",
+          "Steam blowing from coolant reservoir"
+        ],
+        vibrationOptions: [
+          "None",
+          "Steering wheel shakes at 80-100 km/h (Wheel Balance)",
+          "Whole car body pulses during braking (Warped Rotors)",
+          "Engine shakes roughly at idle"
+        ],
+        warningOptions: [
+          "None - Dashboard clear",
+          "12V Battery / Charging System Light",
+          "Check Engine Light (MIL)",
+          "Low Oil Pressure Canister (Red)",
+          "High Coolant Temperature Symbol (Red)",
+          "ABS / Brake Warning Light"
+        ],
+        partsChecklist: [
+          { id: "wOil", label: "Engine Oil & Filter", checked: true },
+          { id: "wBrakes", label: "Brake Pads", checked: false },
+          { id: "wBattery", label: "12V Battery", checked: false },
+          { id: "wCoolant", label: "Coolant Flush", checked: false },
+          { id: "wAir", label: "Air Intake Filter", checked: true },
+          { id: "wPlugs", label: "Spark Plugs", checked: false }
+        ],
+        descPlaceholder: "e.g. My Creta is making a high-pitched squeal when braking, or clicking rapidly without cranking..."
+      },
+
+      "Car / Sedan": {
+        badge: "Car / Sedan / Hatchback",
+        brandPlaceholder: "e.g. Hyundai Verna, Maruti Swift, Honda City",
+        fuels: ["Petrol", "Diesel", "CNG", "EV"],
+        defaultFuel: "Petrol",
+        whenOptions: [
+          "Starting engine / Cold start",
+          "Engine idling at traffic signal",
+          "Hard acceleration / Revving up",
+          "Highway speeds (80-110 km/h)",
+          "Applying brakes / Decelerating",
+          "Sharp steering turns / U-turn",
+          "Driving over speed bumps"
+        ],
+        soundOptions: [
+          "None - Silent",
+          "Rapid clicking sound while starting (No crank)",
+          "High-pitched brake squealing / screeching",
+          "Metallic knocking / tapping from engine",
+          "Screeching serpentine belt on start or AC",
+          "Rough grinding / metal scraping on brakes",
+          "Hissing noise from AC vents or radiator",
+          "Deep roaring / humming varying with speed"
+        ],
+        smellOptions: [
+          "None",
+          "Burning engine oil odor",
+          "Sweet syrupy smell (Coolant)",
+          "Rotten egg / sulfur smell",
+          "Burning rubber or plastic",
+          "Raw fuel smell"
+        ],
+        smokeOptions: [
+          "None / Normal clear exhaust",
+          "Thick white sweet smoke (Head Gasket)",
+          "Blue / gray smoke (Burning engine oil)",
+          "Heavy black smoke (Over-fueling)"
+        ],
+        startOptions: [
+          "No - Starts instantly",
+          "Yes - Will not start / Clicking only",
+          "Slow sluggish crank, then catches"
+        ],
+        overheatLabel: "Engine Overheating?",
+        overheatOptions: [
+          "No - Temperature needle dead center",
+          "Temperature needle climbing into red",
+          "Steam blowing from coolant reservoir"
+        ],
+        vibrationOptions: [
+          "None",
+          "Steering wheel shakes at 80-100 km/h",
+          "Whole car shakes during braking",
+          "Engine rough idle"
+        ],
+        warningOptions: [
+          "None - Dashboard clear",
+          "12V Battery / Charging Light",
+          "Check Engine Light (MIL)",
+          "Low Oil Pressure Canister (Red)",
+          "High Coolant Temperature Symbol",
+          "ABS / Brake Warning Light"
+        ],
+        partsChecklist: [
+          { id: "wOil", label: "Engine Oil & Filter", checked: true },
+          { id: "wBrakes", label: "Brake Pads", checked: false },
+          { id: "wBattery", label: "12V Battery", checked: false },
+          { id: "wCoolant", label: "Radiator Coolant", checked: false },
+          { id: "wAir", label: "Air Filter", checked: true },
+          { id: "wPlugs", label: "Spark Plugs", checked: false }
+        ],
+        descPlaceholder: "e.g. Car battery seems dead, clicks when turning key, or AC is hissing and blowing warm air..."
+      },
+
+      "Two-Wheeler (Motorcycle / Scooter)": {
+        badge: "Two-Wheeler (Motorcycle / Scooter)",
+        brandPlaceholder: "e.g. Royal Enfield, Honda Activa, Bajaj Pulsar, Yamaha",
+        fuels: ["Petrol", "EV"],
+        defaultFuel: "Petrol",
+        whenOptions: [
+          "Starting motorcycle (Kick / Self start)",
+          "Engine idling at stand",
+          "Accelerating in low gears (Chain slap)",
+          "Cruising at 40-70 km/h (Handlebar wobble)",
+          "Applying front disc or rear drum brake",
+          "Taking sharp cornering turns",
+          "Passing over potholes / bumps (Fork clunk)"
+        ],
+        soundOptions: [
+          "None - Silent",
+          "Drive chain rattling / loose chain slapping swingarm",
+          "Tappet clicking / valve chatter from engine head",
+          "Front disc brake squeak / rear drum squeal",
+          "Scooter CVT belt whine / dry grinding noise",
+          "Exhaust popping / backfiring on deceleration",
+          "Front telescopic fork knocking over bumps"
+        ],
+        smellOptions: [
+          "None",
+          "Burning 4T engine oil smell",
+          "Hot burnt clutch plate smell (Clutch slippage)",
+          "Raw petrol vapor from carburettor/tank overflow",
+          "Burning rubber / electrical wire smell"
+        ],
+        smokeOptions: [
+          "None / Normal clear exhaust",
+          "Faint white condensation on cold morning start",
+          "Thick blue / white smoke (Piston ring / valve seal oil burn)",
+          "Heavy black soot smoke (Rich mixture / dirty air filter)"
+        ],
+        startOptions: [
+          "No - Starts on first kick/self-start",
+          "Self-start clicks under seat but starter won't spin",
+          "Kick-start slipping / hard resistance to kick",
+          "Engine cranks fast but won't fire (Spark plug / fuel tap)"
+        ],
+        overheatLabel: "Engine Overheating / Air Fin Temperature?",
+        overheatOptions: [
+          "Normal running temperature",
+          "Excessive heat felt on rider's legs / burnt oil smell",
+          "Engine thermal seizure (Engine locks up when hot)"
+        ],
+        vibrationOptions: [
+          "None - Smooth ride",
+          "Handlebar wobbling at 40-60 km/h (Wheel / Cone-set)",
+          "Rear wheel wobble / fishtailing feel",
+          "Excessive footpeg buzz at high RPM",
+          "Heavy clutch shudder when launching from stop"
+        ],
+        warningOptions: [
+          "None - Cluster clear",
+          "Check Engine / FI (Fuel Injection) Light",
+          "Low 12V Battery Indicator",
+          "ABS Warning Light",
+          "Engine Temperature Warning (Liquid cooled)"
+        ],
+        partsChecklist: [
+          { id: "wOil", label: "4T Engine Oil", checked: true },
+          { id: "wChain", label: "Drive Chain & Sprocket Kit", checked: false },
+          { id: "wPlugs", label: "Spark Plug", checked: false },
+          { id: "wBrakes", label: "Brake Pads / Drum Shoes", checked: false },
+          { id: "wForks", label: "Front Fork Oil Seals", checked: false },
+          { id: "wAir", label: "Air Filter Element", checked: true }
+        ],
+        descPlaceholder: "e.g. Drive chain is making loose slapping noise against swingarm, or self-start is clicking under seat..."
+      },
+
+      "Electric Vehicle (EV)": {
+        badge: "Electric Vehicle (EV - Zero Emission)",
+        brandPlaceholder: "e.g. Tata Nexon EV, Ather 450X, Ola S1, MG ZS EV",
+        fuels: ["EV"],
+        defaultFuel: "EV",
+        whenOptions: [
+          "Pressing Start / Power button (Ready mode)",
+          "Plugging in home or DC fast charger",
+          "Accelerating from stop (Electric motor torque)",
+          "Highway speeds (80-110 km/h)",
+          "Regenerative braking (Lifting foot off throttle)",
+          "Over road bumps / rough roads"
+        ],
+        soundOptions: [
+          "None - Completely whisper quiet",
+          "High-pitched electric motor whining noise",
+          "Inverter electrical high-frequency humming",
+          "Heat pump / AC compressor buzzing",
+          "Brake pad dragging / friction squeak",
+          "Suspension thud over road bumps",
+          "Clunk sound when shifting into D or R"
+        ],
+        smellOptions: [
+          "None",
+          "Electrical burning / hot insulation smell",
+          "Ozone / electrical spark odor from charging port",
+          "Hot brake friction smell"
+        ],
+        smokeOptions: [
+          "None (Zero Emission - No Exhaust Pipe)",
+          "⚠️ Battery pack thermal vapor / electrical smoke (Emergency!)"
+        ],
+        startOptions: [
+          "No - Enters 'READY' mode instantly",
+          "Fails to enter 'READY' mode (12V aux battery dead)",
+          "Charging gun locked in port / car refuses to start",
+          "Turtle mode icon displayed on digital cluster"
+        ],
+        overheatLabel: "High-Voltage Battery / Inverter Temperature?",
+        overheatOptions: [
+          "Normal battery temperature",
+          "Battery thermal warning / Reduced power (Turtle mode)",
+          "Thermal cooling fan running at maximum continuously"
+        ],
+        vibrationOptions: [
+          "None - Vibration free",
+          "Steering wheel vibration at highway speeds (Wheel balance)",
+          "Shudder during strong regenerative braking",
+          "Suspension clunk over uneven tarmac"
+        ],
+        warningOptions: [
+          "None - Digital cluster clear",
+          "Turtle Mode Icon (Power Limited)",
+          "12V Auxiliary Battery Warning Light",
+          "HV Traction Battery / Electrical Fault (Red)",
+          "Insulation / Earth Fault Warning",
+          "Charging System Error Halo"
+        ],
+        partsChecklist: [
+          { id: "wAuxBattery", label: "12V Auxiliary Battery", checked: false },
+          { id: "wCabinAir", label: "Cabin Pollen Filter", checked: true },
+          { id: "wBrakeFluid", label: "Brake Fluid", checked: false },
+          { id: "wEvCoolant", label: "Battery Dielectric Coolant", checked: false },
+          { id: "wTires", label: "EV Low-Rolling Resistance Tires", checked: false },
+          { id: "wSuspension", label: "Suspension Bushings", checked: false }
+        ],
+        descPlaceholder: "e.g. EV will not enter READY mode, 12V battery warning on cluster, or charging gun will not unlock..."
+      },
+
+      "Commercial Mini-Truck": {
+        badge: "Commercial Mini-Truck / Pickup",
+        brandPlaceholder: "e.g. Tata Ace, Mahindra Bolero Maxi Truck, Ashok Leyland Dost",
+        fuels: ["Diesel", "CNG", "EV", "Petrol"],
+        defaultFuel: "Diesel",
+        whenOptions: [
+          "Starting engine on cold morning",
+          "Engine idling with load",
+          "Climbing steep gradient with cargo payload",
+          "Highway hauling (60-80 km/h)",
+          "Applying heavy load brakes",
+          "Driving over uneven roads with cargo"
+        ],
+        soundOptions: [
+          "None - Normal diesel engine sound",
+          "Loud diesel injector clatter / sharp metallic knock",
+          "Rear leaf spring squeaking / creaking under cargo load",
+          "Propeller shaft clunk when releasing clutch",
+          "Differential gear whine at highway speeds",
+          "Turbocharger high-pitched boost whistle / air leak",
+          "Air brake pressure release hissing"
+        ],
+        smellOptions: [
+          "None",
+          "Diesel exhaust soot smell",
+          "Burnt heavy clutch plate odor under cargo",
+          "Raw diesel fuel leak smell",
+          "Burnt differential gear oil smell"
+        ],
+        smokeOptions: [
+          "None / Normal diesel exhaust",
+          "Heavy thick black soot smoke under cargo load",
+          "Blue smoke from exhaust (Turbocharger / piston wear)",
+          "White unburnt diesel smoke on cold morning start"
+        ],
+        startOptions: [
+          "No - Starts immediately",
+          "Long cranking before firing (Glow plug / fuel prime)",
+          "Slow weak cranking (Heavy duty battery discharged)",
+          "Air in diesel fuel line / stalls right after start"
+        ],
+        overheatLabel: "Engine Overheating Under Cargo Payload?",
+        overheatOptions: [
+          "Normal running temperature",
+          "Temperature needle climbing near red zone uphill",
+          "Radiator boiling / steam leaking from cap"
+        ],
+        vibrationOptions: [
+          "None",
+          "Steering wheel wobble at 60-80 km/h",
+          "Heavy body bounce / leaf spring shudder with load",
+          "Driveline vibration during acceleration (U-joint)",
+          "Engine shaking at low diesel idle"
+        ],
+        warningOptions: [
+          "None - Cluster clear",
+          "Check Engine Light (MIL)",
+          "Water-in-Fuel Filter Warning Lamp",
+          "DPF / Particulate Filter Regeneration Warning",
+          "Low Engine Oil Pressure Canister (Red)",
+          "AdBlue / DEF Level Low Warning"
+        ],
+        partsChecklist: [
+          { id: "wHeavyOil", label: "Diesel Heavy Duty Engine Oil", checked: true },
+          { id: "wFuelFilter", label: "Diesel Fuel Filter Element", checked: false },
+          { id: "wLeafSpring", label: "Leaf Spring Greasing / Bushes", checked: false },
+          { id: "wDiffOil", label: "Differential Gear Oil", checked: false },
+          { id: "wBrakeLiners", label: "Brake Liners / Drums", checked: false },
+          { id: "wClutch", label: "Clutch Plate & Release Bearing", checked: false }
+        ],
+        descPlaceholder: "e.g. Rear leaf springs are squeaking loudly under cargo, or water-in-fuel lamp is on with black smoke..."
+      }
+    };
+
+    function onVehicleTypeChange() {
+      const type = document.getElementById('vType').value;
+      const config = VEHICLE_CONFIGS[type] || VEHICLE_CONFIGS["Compact SUV / SUV"];
+
+      document.getElementById('vTypeBadge').innerText = config.badge;
+      document.getElementById('vBrand').placeholder = config.brandPlaceholder;
+      document.getElementById('sProblemDesc').placeholder = config.descPlaceholder;
+
+      const fuelSel = document.getElementById('vFuel');
+      fuelSel.innerHTML = '';
+      config.fuels.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f;
+        opt.innerText = f === 'EV' ? 'Electric (EV)' : f;
+        if (f === config.defaultFuel) opt.selected = true;
+        fuelSel.appendChild(opt);
+      });
+
+      populateSelect('sWhen', config.whenOptions);
+      populateSelect('sSound', config.soundOptions);
+      populateSelect('sSmell', config.smellOptions);
+      populateSelect('sSmoke', config.smokeOptions);
+      populateSelect('sStart', config.startOptions);
+      document.getElementById('lblOverheat').innerText = config.overheatLabel;
+      populateSelect('sOverheat', config.overheatOptions);
+      populateSelect('sVibration', config.vibrationOptions);
+      populateSelect('sWarningLight', config.warningOptions);
+
+      const chkContainer = document.getElementById('partsChecklistContainer');
+      chkContainer.innerHTML = '';
+      
+      const allPartsForType = [
+        { id: "wOil", label: "Engine Oil (Service interval reached)", checked: true },
+        { id: "wOilFilter", label: "Oil Filter (With engine oil)", checked: true },
+        { id: "wAir", label: "Air Filter (Dirty / clogged)", checked: true },
+        { id: "wCabin", label: "Cabin / AC Filter (Dirty / weak airflow)", checked: false },
+        { id: "wFuel", label: "Fuel Filter (Specified interval)", checked: false },
+        { id: "wPlugs", label: "Spark Plugs (Specified mileage)", checked: false },
+        { id: "wBrakes", label: "Brake Pads / Shoes (Excessive wear)", checked: false },
+        { id: "wBrakeFluid", label: "Brake Fluid (Interval reached)", checked: false },
+        { id: "wCoolant", label: "Coolant (Interval reached)", checked: false },
+        { id: "wTransOil", label: "Transmission / Gearbox Oil (As specified)", checked: false },
+        { id: "wWipers", label: "Wiper Blades (Poor wiping / cracked)", checked: false },
+        { id: "wBattery", label: "12V Battery (Weak / failed)", checked: false },
+        { id: "wBelts", label: "Belts - Serpentine / Timing (Cracked / worn)", checked: false },
+        { id: "wTyres", label: "Tyres (Low tread / damage)", checked: false },
+        { id: "wClutch", label: "Clutch Components (Worn / slipping)", checked: false },
+        { id: "wSuspension", label: "Suspension Components (Damaged / worn)", checked: false },
+        { id: "wLights", label: "Light Bulbs / Fuses (Faulty / blown)", checked: false }
+      ];
+
+      // Filter EV-incompatible items if vehicle is EV
+      const isEv = (document.getElementById('vFuel').value === 'EV' || type.includes('EV'));
+      const activeList = isEv ? allPartsForType.filter(p => !['wOil', 'wOilFilter', 'wPlugs', 'wFuel', 'wClutch'].includes(p.id)) : allPartsForType;
+
+      activeList.forEach(item => {
+        const lbl = document.createElement('label');
+        lbl.className = 'check-label';
+        lbl.innerHTML = `<input type="checkbox" id="${item.id}" ${item.checked ? 'checked' : ''}> ${item.label}`;
+        chkContainer.appendChild(lbl);
+      });
+    }
+
+    function onFuelTypeChange() {
+      const fuel = document.getElementById('vFuel').value;
+      if (fuel === 'EV') {
+        const evConfig = VEHICLE_CONFIGS["Electric Vehicle (EV)"];
+        document.getElementById('lblOverheat').innerText = evConfig.overheatLabel;
+        populateSelect('sOverheat', evConfig.overheatOptions);
+        populateSelect('sSmoke', evConfig.smokeOptions);
+      }
+    }
+
+    function populateSelect(elemId, optionsList) {
+      const sel = document.getElementById(elemId);
+      sel.innerHTML = '';
+      optionsList.forEach((optStr, idx) => {
+        const opt = document.createElement('option');
+        opt.value = optStr;
+        opt.innerText = optStr;
+        if (idx === 0) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    // =========================================================================
+    // PROGRESSIVE STEP-BY-STEP WIZARD CONTROLLER
+    // =========================================================================
+    let currentWizardIssueKey = 'BATTERY_ELECTRICAL';
+    let currentWizardData = {};
+    let currentCheckQuestions = [];
+    let userCheckAnswers = {};
+
+    function previewDashboardPhoto(e) {
+      if (e.target.files && e.target.files[0]) {
+        document.getElementById('photoPreviewBox').style.display = 'block';
+      }
+    }
+
+    // STAGE 1 -> STAGE 2 TRANSITION
+    function goToSymptomsStage() {
+      const brand = document.getElementById('vBrand').value.trim() || 'Vehicle';
+      const model = document.getElementById('vModel').value.trim() || '';
+      const year = document.getElementById('vYear').value;
+      const fuel = document.getElementById('vFuel').value;
+      const odo = document.getElementById('vOdo').value;
+      const targetPart = document.getElementById('sTargetPart').value;
+
+      document.getElementById('sumVehicleText').innerText = `${brand} ${model} (${year}, ${fuel}) | ${Number(odo).toLocaleString()} km`;
+
+      // Handle targeted component display & framed questions in Step 2
+      const partHighlight = document.getElementById('stage2PartHighlightBox');
+      const framedCard = document.getElementById('stage2FramedQuestionsCard');
+
+      if (targetPart !== 'NONE' && COMMONLY_REPLACED_PARTS[targetPart]) {
+        const item = COMMONLY_REPLACED_PARTS[targetPart];
+        document.getElementById('stage2PartTitle').innerText = item.name;
+        document.getElementById('stage2PartTrigger').innerText = `Usually replaced when: ${item.trigger}`;
+        partHighlight.style.display = 'block';
+        framedCard.style.display = 'block';
+        renderStage2FramedQuestions(targetPart);
+
+        // Pre-populate description if empty
+        const descElem = document.getElementById('sProblemDesc');
+        if (!descElem.value.trim()) {
+          descElem.value = `Inspection for ${item.name} (Trigger: ${item.trigger})`;
+        }
+      } else {
+        partHighlight.style.display = 'none';
+        framedCard.style.display = 'none';
+      }
+
+      document.getElementById('stage1VehicleProfile').style.display = 'none';
+      document.getElementById('stage2Symptoms').style.display = 'block';
+      document.getElementById('stage3Checks').style.display = 'none';
+      document.getElementById('stage4Decision').style.display = 'none';
+
+      document.getElementById('ws1').className = 'wiz-step completed';
+      document.getElementById('ws2').className = 'wiz-step active';
+      document.getElementById('ws3').className = 'wiz-step';
+      document.getElementById('ws4').className = 'wiz-step';
+
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    // STAGE 2 -> STAGE 1 BACK NAVIGATION
+    function backToStage1() {
+      document.getElementById('stage1VehicleProfile').style.display = 'block';
+      document.getElementById('stage2Symptoms').style.display = 'none';
+      document.getElementById('stage3Checks').style.display = 'none';
+      document.getElementById('stage4Decision').style.display = 'none';
+
+      document.getElementById('ws1').className = 'wiz-step active';
+      document.getElementById('ws2').className = 'wiz-step';
+      document.getElementById('ws3').className = 'wiz-step';
+      document.getElementById('ws4').className = 'wiz-step';
+
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    // STAGE 2 -> STAGE 3 (AI ANALYSIS & CHECKS GENERATION)
+    function submitSymptomsStage() {
+      const payload = {
+        vehicle_type: document.getElementById('vType').value,
+        brand: document.getElementById('vBrand').value,
+        model: document.getElementById('vModel').value,
+        manufacturing_year: document.getElementById('vYear').value,
+        fuel_type: document.getElementById('vFuel').value,
+        target_part: document.getElementById('sTargetPart').value,
+        odometer_km: parseFloat(document.getElementById('vOdo').value) || 42000,
+        last_service_date: document.getElementById('vLastService').value,
+        problem_description: document.getElementById('sProblemDesc').value,
+        when_it_happens: document.getElementById('sWhen').value,
+        frequency: document.getElementById('sFrequency').value,
+        unusual_sound: document.getElementById('sSound').value,
+        unusual_smell: document.getElementById('sSmell').value,
+        smoke_color: document.getElementById('sSmoke').value,
+        start_problem: document.getElementById('sStart').value,
+        reduced_power: document.getElementById('sPower').value,
+        reduced_mileage: document.getElementById('sMileage').value,
+        overheating: document.getElementById('sOverheat').value,
+        vibration: document.getElementById('sVibration').value,
+        warning_light: document.getElementById('sWarningLight').value
+      };
+
+      currentWizardData = payload;
+
+      fetch('/api/wizard_step1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(data => {
+        currentWizardIssueKey = data.suspected_issue_key;
+        currentCheckQuestions = data.suggested_checks;
+        userCheckAnswers = {};
+
+        document.getElementById('wizSuspectedTitle').innerText = data.issue_name;
+        document.getElementById('wizAiBadge').innerText = data.subsystem;
+        document.getElementById('wizConfidenceText').innerText = `AI Confidence: ${data.confidence_score}% based on reported vehicle profile and symptoms.`;
+
+        renderCheckQuestions(data.suggested_checks);
+
+        document.getElementById('stage1VehicleProfile').style.display = 'none';
+        document.getElementById('stage2Symptoms').style.display = 'none';
+        document.getElementById('stage3Checks').style.display = 'block';
+        document.getElementById('stage4Decision').style.display = 'none';
+
+        document.getElementById('ws1').className = 'wiz-step completed';
+        document.getElementById('ws2').className = 'wiz-step completed';
+        document.getElementById('ws3').className = 'wiz-step active';
+        document.getElementById('ws4').className = 'wiz-step';
+
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      })
+      .catch(err => console.error(err));
+    }
+
+    // STAGE 3 -> STAGE 2 BACK NAVIGATION
+    function backToStage2() {
+      document.getElementById('stage1VehicleProfile').style.display = 'none';
+      document.getElementById('stage2Symptoms').style.display = 'block';
+      document.getElementById('stage3Checks').style.display = 'none';
+      document.getElementById('stage4Decision').style.display = 'none';
+
+      document.getElementById('ws1').className = 'wiz-step completed';
+      document.getElementById('ws2').className = 'wiz-step active';
+      document.getElementById('ws3').className = 'wiz-step';
+      document.getElementById('ws4').className = 'wiz-step';
+
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function renderCheckQuestions(questions) {
+      const container = document.getElementById('wizQuestionsContainer');
+      container.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'q-card';
+        qDiv.innerHTML = `
+          <div class="q-title">${idx + 1}. ${q.text}</div>
+          <div class="q-options" id="opt_group_${q.id}">
+            ${q.options.map((opt, optIdx) => `
+              <button type="button" class="q-opt-btn ${optIdx === 0 ? 'selected' : ''}" onclick="selectCheckOption('${q.id}', '${opt.replace(/'/g, "\'")}', this)">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(qDiv);
+        userCheckAnswers[q.id] = q.options[0];
+      });
+    }
+
+    function selectCheckOption(qId, val, btn) {
+      userCheckAnswers[qId] = val;
+      const parent = document.getElementById('opt_group_' + qId);
+      parent.querySelectorAll('.q-opt-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    // STAGE 3 -> STAGE 4 (FINAL 3-TIER RECOMMENDATION)
+    function submitChecksStage() {
+      const payload = {
+        issue_key: currentWizardIssueKey,
+        answers: userCheckAnswers,
+        vehicle_info: currentWizardData
+      };
+
+      fetch('/api/wizard_step4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(res => {
+        const box = document.getElementById('decBannerBox');
+        box.style.borderColor = res.badge_color;
+        box.style.background = res.result_tier === 'DIY' ? 'rgba(0,230,118,0.1)' : (res.result_tier === 'INSPECTION_REQUIRED' ? 'rgba(255,179,0,0.1)' : 'rgba(255,23,68,0.1)');
+        
+        document.getElementById('decEmoji').innerText = res.result_tier === 'DIY' ? '🟢' : (res.result_tier === 'INSPECTION_REQUIRED' ? '🟡' : '🔴');
+        const badge = document.getElementById('decBadgeText');
+        badge.innerText = res.tier_badge;
+        badge.style.color = res.badge_color;
+        document.getElementById('decMeaningText').innerText = res.tier_meaning;
+
+        const fList = document.getElementById('decFindingsList');
+        fList.innerHTML = '';
+        res.findings_summary.forEach(f => {
+          const d = document.createElement('div');
+          d.className = 'diy-step-box';
+          d.innerHTML = `• ${f}`;
+          fList.appendChild(d);
+        });
+
+        document.getElementById('decFuzzyScore').innerText = `${res.fuzzy_decision_score} / 100`;
+        document.getElementById('decRiskScore').innerText = `${res.risk_rating} / 10`;
+        document.getElementById('decCompScore').innerText = `${res.complexity_rating} / 10`;
+
+        const plan = res.action_plan;
+        document.getElementById('decPrimaryAction').innerText = plan.primary_action;
+        document.getElementById('decTime').innerText = plan.estimated_time;
+        document.getElementById('decCost').innerText = plan.cost_estimate;
+        document.getElementById('decTools').innerText = plan.tools_needed.join(', ');
+
+        const stepsList = document.getElementById('decStepsList');
+        stepsList.innerHTML = '';
+        plan.steps.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'diy-step-box';
+          div.innerText = s;
+          stepsList.appendChild(div);
+        });
+
+        document.getElementById('stage1VehicleProfile').style.display = 'none';
+        document.getElementById('stage2Symptoms').style.display = 'none';
+        document.getElementById('stage3Checks').style.display = 'none';
+        document.getElementById('stage4Decision').style.display = 'block';
+
+        document.getElementById('ws1').className = 'wiz-step completed';
+        document.getElementById('ws2').className = 'wiz-step completed';
+        document.getElementById('ws3').className = 'wiz-step completed';
+        document.getElementById('ws4').className = 'wiz-step active';
+
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      })
+      .catch(err => console.error(err));
+    }
+
+    function resetWizard() {
+      document.getElementById('stage1VehicleProfile').style.display = 'block';
+      document.getElementById('stage2Symptoms').style.display = 'none';
+      document.getElementById('stage3Checks').style.display = 'none';
+      document.getElementById('stage4Decision').style.display = 'none';
+
+      document.getElementById('ws1').className = 'wiz-step active';
+      document.getElementById('ws2').className = 'wiz-step';
+      document.getElementById('ws3').className = 'wiz-step';
+      document.getElementById('ws4').className = 'wiz-step';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- CHATBOT LOGIC ---
+    function handleChatKey(e) {
+      if (e.key === 'Enter') sendChatMessage();
+    }
+
+    function sendQuickPrompt(t) {
+      document.getElementById('chatInput').value = t;
+      sendChatMessage();
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      appendChatMessage('user', text);
+      input.value = '';
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      })
+      .then(r => r.json())
+      .then(data => {
+        let formatted = data.bot_reply
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/\n/g, '<br>');
+        appendChatMessage('bot', formatted);
+      })
+      .catch(err => console.error(err));
+    }
+
+    function appendChatMessage(sender, htmlContent) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = sender === 'user' ? 'chat-msg chat-msg-user' : 'chat-msg chat-msg-bot';
+      msgDiv.innerHTML = htmlContent;
+      const box = document.getElementById('chatMessages');
+      box.appendChild(msgDiv);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // --- TELEMETRY COCKPIT LOGIC ---
+    let currentScenario = 'NORMAL_CRUISE';
+    let currentStep = 0;
+    let autoPlayTimer = null;
+
+    function setScenario(scen) {
+      currentScenario = scen;
+      currentStep = 0;
+      fetchScenarioStep();
+    }
+
+    function toggleAutoPlay() {
+      const btn = document.getElementById('btnAutoPlay');
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+        btn.innerText = '▶ Start Stream';
+      } else {
+        btn.innerText = '⏸ Pause Stream';
+        autoPlayTimer = setInterval(() => {
+          currentStep = (currentStep + 1) % 30;
+          fetchScenarioStep();
+        }, 1200);
+      }
+    }
+
+    function fetchScenarioStep() {
+      fetch('/api/scenario?name=' + currentScenario + '&step=' + currentStep)
+        .then(r => r.json())
+        .then(data => updateTelemetryUI(data.snapshot, data.diagnosis))
+        .catch(err => console.error(err));
+    }
+
+    function onSliderChange() {
+      if (autoPlayTimer) toggleAutoPlay();
+      const payload = {
+        engine_rpm: parseFloat(document.getElementById('slRpm').value),
+        coolant_temp: parseFloat(document.getElementById('slTemp').value),
+        oil_pressure: parseFloat(document.getElementById('slOil').value),
+        battery_voltage: parseFloat(document.getElementById('slVolt').value),
+        vibration: 1.2,
+        vehicle_speed: 65.0
+      };
+      document.getElementById('slRpmVal').innerText = payload.engine_rpm;
+      document.getElementById('slTempVal').innerText = payload.coolant_temp + '°C';
+      document.getElementById('slOilVal').innerText = payload.oil_pressure + ' PSI';
+      document.getElementById('slVoltVal').innerText = payload.battery_voltage + ' V';
+
+      fetch('/api/diagnose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(diag => updateTelemetryUI(payload, diag))
+      .catch(err => console.error(err));
+    }
+
+    function updateTelemetryUI(snap, diag) {
+      document.getElementById('valRPM').innerText = Math.round(snap.engine_rpm);
+      document.getElementById('valSpeed').innerText = Math.round(snap.vehicle_speed_kmh || 65);
+      const temp = snap.coolant_temp_c || snap.coolant_temp;
+      document.getElementById('valTemp').innerText = Math.round(temp) + '°C';
+      const oil = snap.oil_pressure_psi || snap.oil_pressure;
+      document.getElementById('valOil').innerText = Math.round(oil) + ' PSI';
+      const volt = snap.battery_voltage_v || snap.battery_voltage;
+      document.getElementById('valVolt').innerText = Number(volt).toFixed(1) + 'V';
+      const vib = snap.vibration_ms2 || snap.vibration || 1.2;
+      document.getElementById('valVib').innerText = Number(vib).toFixed(1);
+
+      const state = diag.tcs_layer.current_state;
+      ['nodeS0', 'nodeS1', 'nodeS2', 'nodeS3', 'nodeS4'].forEach(id => document.getElementById(id).className = 'fsm-node');
+      const stateMap = { 'S0_NORMAL': 'nodeS0', 'S1_ADVISORY': 'nodeS1', 'S2_LIMP_MODE': 'nodeS2', 'S3_CRITICAL_FAULT': 'nodeS3', 'S4_EMERGENCY_HALT': 'nodeS4' };
+      if (stateMap[state]) document.getElementById(stateMap[state]).className = 'fsm-node active';
+
+      document.getElementById('mooreState').innerText = state;
+      document.getElementById('mooreThrottle').innerText = diag.tcs_layer.moore_outputs.max_throttle_percent + '%';
+      document.getElementById('mooreLamp').innerText = diag.tcs_layer.moore_outputs.check_engine_light;
+      document.getElementById('mooreMsg').innerText = diag.tcs_layer.moore_outputs.action_advisory;
+
+      const vhi = diag.soft_computing_layer.vehicle_health_index_pct;
+      document.getElementById('vhiScore').innerText = Math.round(vhi) + '%';
+      document.getElementById('vhiGrade').innerText = diag.soft_computing_layer.health_grade;
+
+      document.getElementById('aiClass').innerText = diag.aiml_layer.diagnostic_classification;
+      document.getElementById('aiExplanation').innerText = diag.aiml_layer.ai_explanation;
+      document.getElementById('aiConfidence').innerText = diag.aiml_layer.confidence_pct + '%';
+      document.getElementById('rulKm').innerText = diag.aiml_layer.predictive_maintenance_rul.estimated_rul_km.toLocaleString() + ' km';
+    }
+
+    function inspectDTC() {
+      const code = document.getElementById('dtcInspectInput').value.trim();
+      fetch('/api/validate_dtc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code })
+      })
+      .then(r => r.json())
+      .then(res => {
+        const out = document.getElementById('dtcInspectResult');
+        if (!res.is_valid) {
+          out.innerHTML = '<span style="color:var(--danger);">Invalid DTC Code Syntax!</span>';
+        } else {
+          out.innerHTML = `<strong>${res.category}</strong> [${res.severity}]<br>${res.description}<br><em>Action: ${res.recommended_action}</em>`;
+        }
+      });
+    }
+
+    function resetSystem() {
+      fetch('/api/reset').then(() => fetchScenarioStep());
+    }
+
+    // Initialize adaptive form on load
+    onVehicleTypeChange();
+    fetchScenarioStep();
+  </script>
+</body>
+</html>
